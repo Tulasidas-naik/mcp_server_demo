@@ -11,11 +11,10 @@ import asyncio
 import os
 from mcp.shared.context import RequestContext
 import base64
-# client = stdio_client("AudioRegistryServer")
 
 server_params = StdioServerParameters(
     command="python",  # Adjust as needed
-    args=["main.py"],  # Your actual server script path
+    args=["mcp_server.py"],  # Your actual server script path
     env={}
 )
 
@@ -33,7 +32,6 @@ async def analyze():
     file = request.files['audio']
     context_id = request.form.get('context_id')
 
-    print(file, context_id,"////////////////")
     if not file or not context_id:
         return jsonify({"error": "Missing file or context ID"}), 400
 
@@ -51,7 +49,6 @@ async def analyze():
 
     async with stdio_client(server_params) as (read, write):
         async with ClientSession(read, write) as session:
-            print(session,"-----------------------")
             # Initialize the connection
             # try:
             await session.initialize()
@@ -111,11 +108,6 @@ async def analyze():
             except Exception as e:
                 print(f"Error during audio conversion/processing: {e}")
                 return jsonify({"error": f"Failed to process audio. Details: {str(e)}"}), 500
-
-
-# def main():
-#     """Entry point for the client script."""
-#     asyncio.run(analyze())
 
 
 if __name__ == '__main__':
